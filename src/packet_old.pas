@@ -45,10 +45,10 @@ type
     class function Encrypt( Data : string) : string;
 // assumes input is in the header+data packet format
 // output is in the header+data packet format
-    class function Decompress( const Data :string ) : string;
+    class function Decompress( const Data : AnsiString ) : AnsiString;
 // assumes input is in the header+data packet format
 // output is in the header+data packet format
-    class function Compress (const Data :String) :string;
+    class function Compress (const Data : AnsiString) : AnsiString;
 
     function GetTimestamp :Longword;
 
@@ -415,7 +415,7 @@ end;
 {$IFDEF tmp3654273} {$UNDEF tmp3654273} {$Q+}{$ENDIF}
 
 //Tar ett helt paket med kontrollkod och checksum i alltså
-class function TPacket.Decompress(const Data :string) :string;
+class function TPacket.Decompress(const Data :AnsiString) :AnsiString;
 var
   SourceIndex, ChunkNumber :integer;
   SourceLen : Integer;
@@ -505,7 +505,7 @@ end; {Decompress}
 
 // Takes a packet with controlcodes and checksum (will overwrite controlcode)
 //Tar ett helt paket med kontrollkod och checksum i alltså (skriver över kontrollkoden)
-class function TPacket.Compress (const Data :String) :string;
+class function TPacket.Compress (const Data :AnsiString) :AnsiString;
 var
   index,cbf,count,a,matchl,cmatchl       : integer;
   kommando,match                         : word;
@@ -576,7 +576,7 @@ begin
   if count=7 then
     result:=result+#$ff
   else
-    result[cbf] := char( byte(result[cbf]) or ($ff shl (count+1)) );
+    result[cbf] := Ansichar( byte(result[cbf]) or ($ff shl (count+1)) );
   result:=result+#0#0;
 
   if (length(result)+3 < length(data)) then

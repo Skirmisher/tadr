@@ -14,18 +14,18 @@ interface
 
 const
   {The name of the debug info support DLL}
-  FullDebugModeLibraryName = 'FastMM_FullDebugMode.dll';
+  FullDebugModeLibraryName32Bit = 'FastMM_FullDebugMode.dll';
+  FullDebugModeLibraryName64Bit = 'FastMM_FullDebugMode64.dll';
   {Event log strings}
   LogFileExtension = '_MemoryManager_EventLog.txt'#0;
   CRLF = #13#10;
   EventSeparator = '--------------------------------';
   {Class name messages}
   UnknownClassNameMsg = 'Onbekend';
-  {Stack trace Message}
-  CurrentStackTraceMsg = #13#10#13#10'Die huidige stapel spoor wat aanleiding gegee het tot hierdie fout (terugkeer adresse): ';
   {Memory dump message}
   MemoryDumpMsg = #13#10#13#10'Huidige geheue inhoud: 256 grepe vanaf adres ';
   {Block Error Messages}
+  BlockScanLogHeader = 'Geallokeerde blok gelys deur LogAllocatedBlocksToFile. The grootte is: ';
   ErrorMsgHeader = 'FastMM het ''n fout teegekom in die uitvoer van ''n ';
   GetMemMsg = 'GetMem';
   FreeMemMsg = 'FreeMem';
@@ -35,25 +35,18 @@ const
   BlockHeaderCorruptedMsg = 'Die merker voor die blok is beskadig. ';
   BlockFooterCorruptedMsg = 'Die merker na die blok is beskadig. ';
   FreeModifiedErrorMsg = 'FastMM het gevind dat ''n blok verander is sedert dit vrygestel is. ';
-  DoubleFreeErrorMsg = '''n Poging is aangewend om ongebruikte ''blok vry te stel of te herallokeer.';
+  FreeModifiedDetailMsg = #13#10#13#10'Die veranderde grepe begin posisies (en aantal) is: ';
+  DoubleFreeErrorMsg = '''n Poging is aangewend om ''n ongebruikte blok vry te stel of te herallokeer.';
+  WrongMMFreeErrorMsg = '''n Poging is aangewend om ''n blok vry te stel of te herallokeer wat deur ''n ander FastMM instansie geallokeer is. Ondersoek jou FastMM deel verstellings.';
   PreviousBlockSizeMsg = #13#10#13#10'Die vorige blok grootte was: ';
   CurrentBlockSizeMsg = #13#10#13#10'Die blok grootte is: ';
-  StackTraceAtPrevAllocMsg = #13#10#13#10'Stapel spoor van toe die blok voorheen geallokeer is (terugkeer adresse):';
-  StackTraceAtAllocMsg = #13#10#13#10'Stapel spoor van toe die blok geallokeer is (terugkeer adresse):';
   PreviousObjectClassMsg = #13#10#13#10'Die blok is voorheen gebruik vir ''n objek van die klas: ';
   CurrentObjectClassMsg = #13#10#13#10'Die blok word huidiglik gebruik vir ''n objek van die klas: ';
-  StackTraceAtFreeMsg = #13#10#13#10'Stapel spoor van toe die blok voorheen vrygestel is (terugkeer adresse):';
+  PreviousAllocationGroupMsg = #13#10#13#10'Die allokasie groep was: ';
+  PreviousAllocationNumberMsg = #13#10#13#10'Die allokasie nommer was: ';
+  CurrentAllocationGroupMsg = #13#10#13#10'Die allokasie groep is: ';
+  CurrentAllocationNumberMsg = #13#10#13#10'Die allokasie nommer is: ';
   BlockErrorMsgTitle = 'Geheue Fout';
-  {Virtual Method Called On Freed Object Errors}
-  StandardVirtualMethodNames: array[1 + vmtParent div 4 .. -1] of PChar = (
-    'SafeCallException',
-    'AfterConstruction',
-    'BeforeDestruction',
-    'Dispatch',
-    'DefaultHandler',
-    'NewInstance',
-    'FreeInstance',
-    'Destroy');
   VirtualMethodErrorHeader = 'FastMM het ''n poging onderskep om ''n virtuele funksie of prosedure van ''n vrygestelde objek te roep. ''n Toegangsfout sal nou veroorsaak word om die proses te onderbreek.';
   InterfaceErrorHeader = 'FastMM het ''n poging onderskep om ''n koppelvlak van ''n vrygestelde objek te gebruik. ''n Toegangsfout sal nou veroorsaak word om die proses te onderbreek.';
   BlockHeaderCorruptedNoHistoryMsg = ' Ongelukkig is die merker voor die blok beskadig en dus is geen blok geskiedenis beskikbaar nie.';
@@ -61,8 +54,15 @@ const
   VirtualMethodName = #13#10#13#10'Virtuele funksie/prosedure: ';
   VirtualMethodOffset = 'VMT Adres +';
   VirtualMethodAddress = #13#10#13#10'Virtuele funksie/prosedure address: ';
-  StackTraceAtObjectAllocMsg = #13#10#13#10'Stapel spoor van toe die blok geallokeer is (terugkeer adresse):';
-  StackTraceAtObjectFreeMsg = #13#10#13#10'Stapel spoor van toe die blok vrygestel is (terugkeer adresse):';
+  {Stack trace messages}
+  CurrentThreadIDMsg = #13#10#13#10'Die huidige thread ID is 0x';
+  CurrentStackTraceMsg = ', en die stapel spoor (terugkeer adresse) wat gelei het tot die fout is:';
+  ThreadIDPrevAllocMsg = #13#10#13#10'Die blok is voorheen geallokeer deur thread 0x';
+  ThreadIDAtAllocMsg = #13#10#13#10'Die blok is geallokeer deur thread 0x';
+  ThreadIDAtFreeMsg = #13#10#13#10'Die blok is voorheen vrygestel deur thread 0x';
+  ThreadIDAtObjectAllocMsg = #13#10#13#10'Die objek is geallokeer deur thread 0x';
+  ThreadIDAtObjectFreeMsg = #13#10#13#10'Die objek is daarna vrygestel deur thread 0x';
+  StackTraceMsg = ', en die stapel spoor (terugkeer adresse) was toe:';
   {Installation Messages}
   AlreadyInstalledMsg = 'FastMM4 is alreeds geïnstalleer.';
   AlreadyInstalledTitle = 'Alreeds geïnstalleer.';
@@ -93,7 +93,8 @@ const
 {$endif}
     + ': ';
   BytesMessage = ' grepe: ';
-  StringBlockMessage = 'String';
+  AnsiStringBlockMessage = 'AnsiString';
+  UnicodeStringBlockMessage = 'UnicodeString';
   LeakMessageFooter = #13#10
 {$ifndef HideMemoryLeakHintMessage}
     + #13#10'Nota: '
@@ -124,7 +125,7 @@ const
   InvalidGetMemMsg = 'FastMM has detected a GetMem call after FastMM was uninstalled.';
   InvalidFreeMemMsg = 'FastMM has detected a FreeMem call after FastMM was uninstalled.';
   InvalidReallocMemMsg = 'FastMM has detected a ReallocMem call after FastMM was uninstalled.';
-  InvalidAllocMemMsg = 'FastMM has detected a ReallocMem call after FastMM was uninstalled.';
+  InvalidAllocMemMsg = 'FastMM has detected an AllocMem call after FastMM was uninstalled.';
 {$endif}
 
 implementation

@@ -91,7 +91,7 @@ type
     class procedure ShakeCam(X, Y, Duration: Cardinal);
 
     class function RaceSideId2Data(Id: Byte): PRaceSideData;
-    class function ScriptActionName2Index(ActionName: String): Byte;
+    class function ScriptActionName2Index(ActionName: AnsiString): Byte;
     class function ScriptActionIndex2Handler(ActionIndex: Byte): PActionHandler;
     class function GetModelPtr(index: Word): Pointer;
     class function UnitInfoId2Ptr(ID: Word): PUnitInfo;
@@ -490,7 +490,7 @@ begin
     Result := @TAData.MainStruct.RaceSideData[Id];
 end;
 
-class function TAMem.ScriptActionName2Index(ActionName: String): Byte;
+class function TAMem.ScriptActionName2Index(ActionName: AnsiString): Byte;
 begin
   ScriptAction_Name2Index(nil, nil, @Result, PAnsiChar(ActionName));
 end;

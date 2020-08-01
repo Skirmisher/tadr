@@ -8,17 +8,17 @@ type
   TIniSettings = record
     // game mod info
     ModId                  : Integer;
-    DemosPrefix            : String;
-    Name                   : String;
-    RegName                : String;
+    DemosPrefix            : AnsiString;
+    Name                   : AnsiString;
+    RegName                : AnsiString;
     Version                : String;
     // limit hack plugins
     UnitType               : Integer;
     UnitLimit              : Integer;
     // paths
-    ScriptorPath           : String;
-    CommonMapsPath         : String;
-    CommonGameDataPath     : String;
+    ScriptorPath           : AnsiString;
+    CommonMapsPath         : AnsiString;
+    CommonGameDataPath     : AnsiString;
     UseCommonMaps          : Boolean;
     UseCommonGameData      : Boolean;
     // multiplayer plugins

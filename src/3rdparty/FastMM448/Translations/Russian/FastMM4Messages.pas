@@ -4,6 +4,9 @@ Fast Memory Manager: Messages
 
 Russian translation by Paul Ishenin.
 
+2006-07-18
+Some minor updates by Andrey V. Shtukaturov.
+
 }
 
 unit FastMM4Messages;
@@ -14,18 +17,18 @@ interface
 
 const
   {The name of the debug info support DLL}
-  FullDebugModeLibraryName = 'FastMM_FullDebugMode.dll';
+  FullDebugModeLibraryName32Bit = 'FastMM_FullDebugMode.dll';
+  FullDebugModeLibraryName64Bit = 'FastMM_FullDebugMode64.dll';
   {Event log strings}
   LogFileExtension = '_MemoryManager_EventLog.txt'#0;
   CRLF = #13#10;
   EventSeparator = '--------------------------------';
   {Class name messages}
   UnknownClassNameMsg = 'Unknown';
-  {Stack trace Message}
-  CurrentStackTraceMsg = #13#10#13#10'Текущая трассировка стека указывает на эту ошибку (вхождения): ';
   {Memory dump message}
   MemoryDumpMsg = #13#10#13#10'Текущий дамп памяти из 256 байт начиная с адреса ';
   {Block Error Messages}
+  BlockScanLogHeader = 'Выделенный блок запротоколирован процедурой LogAllocatedBlocksToFile. Размер: ';
   ErrorMsgHeader = 'FastMM обнаружил ошибку во время ';
   GetMemMsg = 'GetMem';
   FreeMemMsg = 'FreeMem';
@@ -35,34 +38,34 @@ const
   BlockHeaderCorruptedMsg = 'Заголовок блока поврежден. ';
   BlockFooterCorruptedMsg = 'Нижняя часть блока повреждена. ';
   FreeModifiedErrorMsg = 'FastMM обнаружил что блок был модифицирован после его освобождения. ';
+  FreeModifiedDetailMsg = #13#10#13#10'Modified byte offsets (and lengths): ';
   DoubleFreeErrorMsg = 'Была предпринята попытка освободить/перевыделить не выделенный блок.';
+  WrongMMFreeErrorMsg = 'An attempt has been made to free/reallocate a block that was allocated through a different FastMM instance. Check your memory manager sharing settings.';
   PreviousBlockSizeMsg = #13#10#13#10'Размер предыдущего блока был: ';
   CurrentBlockSizeMsg = #13#10#13#10'Размер блока: ';
-  StackTraceAtPrevAllocMsg = #13#10#13#10'Трассировка стека когда этот блок был ранее выделен (вхождения):';
-  StackTraceAtAllocMsg = #13#10#13#10'Трассировка стека при выделении блока (вхождения):';
   PreviousObjectClassMsg = #13#10#13#10'Блок был ранее использован для объекта класса: ';
   CurrentObjectClassMsg = #13#10#13#10'Блок в настоящее время используется для объекта класса: ';
-  StackTraceAtFreeMsg = #13#10#13#10'Трассировка стека когда этот блок был ранее освобожден (вхождения):';
+  PreviousAllocationGroupMsg = #13#10#13#10'Выделенная группа была: ';
+  PreviousAllocationNumberMsg = #13#10#13#10'Выделенный номер был: ';
+  CurrentAllocationGroupMsg = #13#10#13#10'Выделенная группа стала: ';
+  CurrentAllocationNumberMsg = #13#10#13#10'Выделенный номер стал: ';
   BlockErrorMsgTitle = 'Обнаружена ошибка памяти.';
-  {Virtual Method Called On Freed Object Errors}
-  StandardVirtualMethodNames: array[1 + vmtParent div 4 .. -1] of PChar = (
-    'SafeCallException',
-    'AfterConstruction',
-    'BeforeDestruction',
-    'Dispatch',
-    'DefaultHandler',
-    'NewInstance',
-    'FreeInstance',
-    'Destroy');
   VirtualMethodErrorHeader = 'FastMM обнаружил попытку вызвать виртуальный метод освобожденного объекта. Сейчас будет вызвано нарушение доступа для прерывания текущей операции.';
-  InterfaceErrorHeader = 'FastMM обнаружил попытку использовать интерфейс освобожденного объекта. Сейчас будет вызвано нарушение доступа для прерывания текущей операции.Сейчас будет вызвано нарушение доступа для прерывания текущей операции.';
+  InterfaceErrorHeader = 'FastMM обнаружил попытку использовать интерфейс освобожденного объекта. Сейчас будет вызвано нарушение доступа для прерывания текущей операции.';
   BlockHeaderCorruptedNoHistoryMsg = ' К сожалению заголовок блока поврежден и история не доступна.';
-  FreedObjectClassMsg = #13#10#13#10'Клас освобожденного объекта: ';
+  FreedObjectClassMsg = #13#10#13#10'Класс освобожденного объекта: ';
   VirtualMethodName = #13#10#13#10'Виртуальный метод: ';
   VirtualMethodOffset = 'Смещение +';
   VirtualMethodAddress = #13#10#13#10'Адрес виртуального метода: ';
-  StackTraceAtObjectAllocMsg = #13#10#13#10'Трассировка стека когда память под объект была выделена (вхождения):';
-  StackTraceAtObjectFreeMsg = #13#10#13#10'Трассировка стека когда память под объект была впоследствии освобождена (вхождения):';
+  {Stack trace messages}
+  CurrentThreadIDMsg = #13#10#13#10'The current thread ID is 0x';
+  CurrentStackTraceMsg = ', and the stack trace (return addresses) leading to this error is:';
+  ThreadIDPrevAllocMsg = #13#10#13#10'This block was previously allocated by thread 0x';
+  ThreadIDAtAllocMsg = #13#10#13#10'This block was allocated by thread 0x';
+  ThreadIDAtFreeMsg = #13#10#13#10'The block was previously freed by thread 0x';
+  ThreadIDAtObjectAllocMsg = #13#10#13#10'The object was allocated by thread 0x';
+  ThreadIDAtObjectFreeMsg = #13#10#13#10'The object was subsequently freed by thread 0x';
+  StackTraceMsg = ', and the stack trace (return addresses) at the time was:';
   {Installation Messages}
   AlreadyInstalledMsg = 'FastMM4 уже установлен.';
   AlreadyInstalledTitle = 'Уже установлен.';
@@ -72,7 +75,7 @@ const
   OtherMMInstalledTitle = 'Невозможно установить FastMM4 - уже установлен другой менеджер памяти.';
   MemoryAllocatedMsg = 'FastMM4 невозможно установить когда память уже была '
     + 'выделена стандартным менеджером памяти.'#13#10'FastMM4.pas ДОЛЖЕН '
-    + 'быть первым модулем в вашем файле''s .dpr файле проекта, иначе память может '
+    + 'быть первым модулем в вашем файле .dpr файле проекта, иначе память может '
     + 'быть выделена'#13#10'через стандартный менеджер памяти перед тем как FastMM4 '
     + 'получит контроль. '#13#10#13#10'Если вы используете обработчик исключений '
     + 'типа MadExcept (или любой другой инструмент модифицирующий порядок инициализации '
@@ -93,7 +96,8 @@ const
 {$endif}
     + ': ';
   BytesMessage = ' байт: ';
-  StringBlockMessage = 'String';
+  AnsiStringBlockMessage = 'AnsiString';
+  UnicodeStringBlockMessage = 'UnicodeString';
   LeakMessageFooter = #13#10
 {$ifndef HideMemoryLeakHintMessage}
     + #13#10'Note: '

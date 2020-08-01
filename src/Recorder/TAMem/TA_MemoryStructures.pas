@@ -1546,8 +1546,8 @@ type
 
   TPlayerModInfo = packed record
     ModID          : Integer;
-    ModMajorVer    : AnsiChar;
-    ModMinorVer    : AnsiChar;
+    ModMajorVer    : Char;
+    ModMinorVer    : Char;
   end;
 
   TFonts = record

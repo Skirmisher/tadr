@@ -220,7 +220,7 @@ end;
 procedure SpliceInJump( var CodeInjectionData : TCodeInjectionData );  stdcall;
 var
   RelativeJumpRec : TRelativeJumpRec;
-  Count : Longword;
+  Count : NativeUInt;
 
   Writesize, OldProtect,tmpOldProtect : longword;
 begin
@@ -244,7 +244,7 @@ end; {SpliceInJump}
 
 procedure UnSpliceJump( const CodeInjectionData : TCodeInjectionData );  stdcall;
 var
-  Count : Longword;
+  Count : NativeUInt;
   Writesize, OldProtect,tmpOldProtect : longword;  
 begin
 Writesize := Length(CodeInjectionData.BackupData);
@@ -271,9 +271,9 @@ end;
 Procedure TCodeInjection.RestoreProc;
 var
   ReturnAddr: Pointer;
-  CommittedBytes, Writesize: Longword;
+  CommittedBytes, Writesize: NativeUInt;
 
-  OldProtect,tmpOldProtect : longword;  
+  OldProtect,tmpOldProtect : Cardinal;
 begin
 Writesize := longword( length(fOriginalData) );
 
@@ -309,7 +309,7 @@ Procedure TCodeInjection_Replacement.WriteProc;
 var
   CurrentProcessHandle : THandle;
   ReturnAddr: Pointer;
-  Writesize, CommittedBytes : Longword;
+  Writesize, CommittedBytes : NativeUInt;
   OldProtect, tmpOldProtect : longword;
 begin
 CurrentProcessHandle := GetCurrentProcess;
@@ -356,7 +356,7 @@ var
   
   CurrentProcessHandle : THandle;
   ReturnAddr: Pointer;
-  CommittedBytes : Longword;
+  CommittedBytes : NativeUInt;
 
   OldProtect,tmpOldProtect : longword;
   Writesize : longword;
@@ -413,7 +413,7 @@ Procedure TCodeInjection_RelativeJmp.WriteProc;
 var
   CurrentProcessHandle : THandle;
   ReturnAddr: Pointer;
-  CommittedBytes : Longword;
+  CommittedBytes : NativeUInt;
 
   OldProtect,tmpOldProtect : longword;  
 begin

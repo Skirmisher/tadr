@@ -433,14 +433,13 @@ asm
   call PatchNJump;
 end;
 
-procedure LoadWeaponModel(p_Weapon: PWeaponDef;
-  p_ModelName: PAnsiChar); stdcall;
+procedure LoadWeaponModel(p_Weapon: PWeaponDef; p_ModelName: PAnsiChar); stdcall;
 label
   newModel;
 var
   CurrWeapID: Integer;
   idcmp, idcmp2, idcmp3: Integer;
-  Buffer: String[255];
+  Buffer: ShortString;
   p_WeaponModel: Pointer;
 begin
   CurrWeapID := p_Weapon.lWeaponIDCrack;

@@ -51,23 +51,23 @@ procedure LoadCommonMaps;
 var
   FindHandle: Integer;
   SearchRec: TAFindData;
-  CommonMaps, CommonGameData : Boolean;
-  TAPath : String;
-  sRev31Name : String;
+  CommonMaps, CommonGameData: Boolean;
+  TAPath: AnsiString;
+  sRev31Name: AnsiString;
+  res: Integer;
 begin
-  CommonMaps := (IniSettings.CommonMapsPath <> '') and
-    IniSettings.UseCommonMaps;
-  CommonGameData := (IniSettings.CommonGameDataPath <> '') and
-    IniSettings.UseCommonGameData;
+  CommonMaps := (IniSettings.CommonMapsPath <> '') and IniSettings.UseCommonMaps;
+  CommonGameData := (IniSettings.CommonGameDataPath <> '') and IniSettings.UseCommonGameData;
 
   SetCurrentDirectoryToTAPath;
   TAPath := IncludeTrailingPathDelimiter(ExtractFilePath(SelfLocation));
+
   sRev31Name := Format(PAnsiChar(Rev31GP3_Name), [PAnsiChar(Rev31GP3_31)]);
   FindHandle := HAPIFILE_FindFirst(PAnsiChar(sRev31Name), @SearchRec, -1, 1);
   if FindHandle >= 0 then
   begin
     repeat
-      HAPIFILE_InsertToArray(PAnsiChar(TAPath + SearchRec.FileName), 1);
+      HAPIFILE_InsertToArray(PAnsiChar(TAPath + AnsiString(SearchRec.FileName)), 1);
     until
       (HAPIFILE_FindNext(FindHandle, @SearchRec) < 0);
     HAPIFILE_FindClose(FindHandle);
@@ -77,7 +77,7 @@ begin
   if FindHandle >= 0 then
   begin
     repeat
-      HAPIFILE_InsertToArray(PAnsiChar(TAPath + SearchRec.FileName), 1);
+      HAPIFILE_InsertToArray(PAnsiChar(TAPath + AnsiString(SearchRec.FileName)), 1);
     until
       (HAPIFILE_FindNext(FindHandle, @SearchRec) < 0);
     HAPIFILE_FindClose(FindHandle);
@@ -90,7 +90,7 @@ begin
     if FindHandle >= 0 then
     begin
       repeat
-        HAPIFILE_InsertToArray(PAnsiChar(IniSettings.CommonGameDataPath + SearchRec.FileName), 1);
+        HAPIFILE_InsertToArray(PAnsiChar(IniSettings.CommonGameDataPath + AnsiString(SearchRec.FileName)), 1);
       until
         (HAPIFILE_FindNext(FindHandle, @SearchRec) < 0);
       HAPIFILE_FindClose(FindHandle);
@@ -105,7 +105,7 @@ begin
     if FindHandle >= 0 then
     begin
       repeat
-        HAPIFILE_InsertToArray(PAnsiChar(IniSettings.CommonMapsPath + SearchRec.FileName), 1);
+        HAPIFILE_InsertToArray(PAnsiChar(IniSettings.CommonMapsPath + AnsiString(SearchRec.FileName)), 1);
       until
         (HAPIFILE_FindNext(FindHandle, @SearchRec) < 0);
       HAPIFILE_FindClose(FindHandle);
@@ -117,7 +117,7 @@ begin
   if FindHandle >= 0 then
   begin
     repeat
-      HAPIFILE_InsertToArray(PAnsiChar(TAPath + SearchRec.FileName), 0);
+      HAPIFILE_InsertToArray(PAnsiChar(TAPath + AnsiString(SearchRec.FileName)), 0);
     until
       (HAPIFILE_FindNext(FindHandle, @SearchRec) < 0);
     HAPIFILE_FindClose(FindHandle);
@@ -130,7 +130,7 @@ begin
     if FindHandle >= 0 then
     begin
       repeat
-        HAPIFILE_InsertToArray(PAnsiChar(IniSettings.CommonMapsPath + SearchRec.FileName), 0);
+        HAPIFILE_InsertToArray(PAnsiChar(IniSettings.CommonMapsPath + AnsiString(SearchRec.FileName)), 0);
       until
         (HAPIFILE_FindNext(FindHandle, @SearchRec) < 0);
       HAPIFILE_FindClose(FindHandle);
@@ -142,7 +142,7 @@ begin
   if FindHandle >= 0 then
   begin
     repeat
-      HAPIFILE_InsertToArray(PAnsiChar(TAPath + SearchRec.FileName), 0);
+      HAPIFILE_InsertToArray(PAnsiChar(TAPath + AnsiString(SearchRec.FileName)), 0);
     until
       (HAPIFILE_FindNext(FindHandle, @SearchRec) < 0);
     HAPIFILE_FindClose(FindHandle);
@@ -155,7 +155,7 @@ begin
     if FindHandle >= 0 then
     begin
       repeat
-        HAPIFILE_InsertToArray(PAnsiChar(IniSettings.CommonGameDataPath + SearchRec.FileName), 0);
+        res := HAPIFILE_InsertToArray(PAnsiChar(AnsiString(IniSettings.CommonGameDataPath + AnsiString(SearchRec.FileName))), 0);
       until
         (HAPIFILE_FindNext(FindHandle, @SearchRec) < 0);
       HAPIFILE_FindClose(FindHandle);
@@ -169,7 +169,7 @@ begin
     if FindHandle >= 0 then
     begin
       repeat
-        HAPIFILE_InsertToArray(PAnsiChar(IniSettings.CommonMapsPath + SearchRec.FileName), 0);
+        HAPIFILE_InsertToArray(PAnsiChar(IniSettings.CommonMapsPath + AnsiString(SearchRec.FileName)), 0);
       until
         (HAPIFILE_FindNext(FindHandle, @SearchRec) < 0);
       HAPIFILE_FindClose(FindHandle);
@@ -232,7 +232,7 @@ var
   baRegName: TByteArray;
   Registry : TRegistry;
   CurrentProcessHandle : THandle;
-  CommittedBytes : Longword;
+  CommittedBytes : NativeUInt;
   OldProtect, tmpOldProtect : longword;
 
 begin

@@ -5,13 +5,13 @@ uses
   Windows, sysutils, DPlay, DPLobby;
 
 type
-  TLobby = class (TInterfacedObject, IDirectPlayLobby, IDirectPlayLobby2)
+  TLobby = class (TInterfacedObject, IDirectPlayLobbyA, IDirectPlayLobby2A)
   private
-    lobby1 :IDirectPlayLobby;
-    lobby2 :IDirectPlayLobby2;
+    lobby1 :IDirectPlayLobbyA;
+    lobby2 :IDirectPlayLobby2A;
 
   public
-    constructor Create (reallobby :IDirectPlayLobby);
+    constructor Create (reallobby :IDirectPlayLobbyA);
 
     (*** IDirectPlayLobby methods ***)
     function Connect(dwFlags: DWORD; var lplpDP: IDirectPlay2;
@@ -311,7 +311,7 @@ end;
 
 {--------------------------------------------------------------------}
 
-constructor TLobby.Create (reallobby :IDirectPlayLobby);
+constructor TLobby.Create (reallobby :IDirectPlayLobbyA);
 begin
 try
   inherited Create;

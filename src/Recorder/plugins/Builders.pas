@@ -31,7 +31,7 @@ uses
 function IsUnitWeaponNuke(UnitInfoId: Cardinal): LongBool; stdcall;
 var
   UnitInfo: PUnitInfo;
-  UnitInfoName: String;
+  UnitInfoName: AnsiString;
 begin
   Result := False;
   UnitInfo := TAMem.UnitInfoId2Ptr(Word(UnitInfoId));
@@ -200,7 +200,7 @@ end;
 procedure GUISwitcher(p_Unit: PUnitStruct; GUIIndex: Integer; Dest: PAnsiChar); stdcall;
 var
   CustomGUIIdx: Integer;
-  TmpString: String;
+  TmpString: AnsiString;
 begin
   CustomGUIIdx := UnitInfoCustomFields[p_Unit.nUnitInfoID].CustomGUIIdx;
   if CustomGUIIdx <> 0 then
@@ -240,10 +240,10 @@ begin
                                   @OnInstallBuilders,
                                   @OnUnInstallBuilders );
 
-    Result.MakeRelativeJmp( State_Builders,
-                            'Allow registration of yardmap data into memory for units that use tag',
-                            @Builders_YardmapForMobile,
-                            $0042CF38, 1 );
+    //Result.MakeRelativeJmp( State_Builders,
+     //                       'Allow registration of yardmap data into memory for units that use tag',
+     //                       @Builders_YardmapForMobile,
+     //                       $0042CF38, 1 );
 
     Result.MakeReplacement( State_Builders,
                             'Have mobile units use the typical nano colors while under construction',
@@ -266,10 +266,10 @@ begin
                               $004FC980,
                               [$D0, $86] );
 
-      Result.MakeStaticCall( State_Builders,
-                             'Limit AIs non mobile stockpile to 1',
-                             @LimitAINonMobileStockpile,
-                             $004087C4, );
+//      Result.MakeStaticCall( State_Builders,
+//                             'Limit AIs non mobile stockpile to 1',
+//                             @LimitAINonMobileStockpile,
+//                             $004087C4,  );
 
       Result.MakeRelativeJmp( State_Builders,
                               'AIs mobile stockpile will produce weapons',

@@ -253,17 +253,33 @@ var
 function DirectPlayLobbyCreateW(lpguidSP: PGUID; var lplpDPL:
     IDirectPlayLobbyW; lpUnk: IUnknown; lpData: Pointer; dwDataSize: DWORD) :
     HResult; stdcall;
-
+var
+  lb  :IDirectPlayLobbyW;
 begin
 if OnInit() then begin result := DP_OK; exit; end else Result := DPERR_EXCEPTION;
 try
   if @DirectPlayLobbyCreateW_proc = nil then
     DirectPlayLobbyCreateW_proc := GetProcAddress( dplayxLibHandle, 'DirectPlayLobbyCreateW');
   if assigned(DirectPlayLobbyCreateW_proc) then
-    Result := DirectPlayLobbyCreateW_proc(lpguidSP, lplpDPL, lpUnk, lpData, dwDataSize);
-
-  TLog.Add (5,'DLL.DirectPlayLobbyCreateW');
-  TLog.Flush;
+    Result := DirectPlayLobbyCreateW_proc(lpguidSP, lb, lpUnk, lpData, dwDataSize);
+  if Result = DP_OK then
+    begin
+    TLog.Add (5,'DLL.DirectPlayLobbyCreateW');
+    TLog.Add( 5,' + lpGUID : ', lpguidSP );
+    TLog.Flush;
+    {$IFDEF DplayRedirector}
+     lplpDPL := lb;
+    {$ELSE}
+    lplpDPL := lb;
+    {$ENDIF}
+    end
+  else
+    begin
+    TLog.Add( 5,'DLL.DirectPlayLobbyCreateW FAILED' );
+    TLog.Add( 5,' + lpGUID : ', lpguidSP );
+    TLog.Add( 5,'Reason: '+ErrorString(result) );
+    TLog.Flush;
+    end;
 except
   on e : Exception do
      begin
@@ -279,14 +295,14 @@ function DirectPlayLobbyCreateA(lpguidSP: PGUID; var lplpDPL:
     IDirectPlayLobbyA; lpUnk: IUnknown; lpData: Pointer; dwDataSize: DWORD) :
     HResult; stdcall;
 var
-  lb  :IDirectPlayLobby;
+  lb  :IDirectPlayLobbyA;
 begin
 if OnInit() then begin result := DP_OK; exit; end else Result := DPERR_EXCEPTION;
 try
   if @DirectPlayLobbyCreateA_proc = nil then
     DirectPlayLobbyCreateA_proc := GetProcAddress( dplayxLibHandle, 'DirectPlayLobbyCreateA');
-  if assigned(DirectPlayLobbyCreateA_proc) then  
-    Result := DirectPlayLobbyCreateA_proc(lpguidSP, lb, lpUnk, lpData, dwDataSize);  
+  if assigned(DirectPlayLobbyCreateA_proc) then
+    Result := DirectPlayLobbyCreateA_proc(lpguidSP, lb, lpUnk, lpData, dwDataSize);
   if Result = DP_OK then
     begin
     TLog.Add (5,'DLL.DirectPlayLobbyCreateA');
@@ -295,7 +311,7 @@ try
     {$IFDEF DplayRedirector}
      lplpDPL := lb;
     {$ELSE}
-    lplpDPL := TLobby.Create (lb);
+    lplpDPL := TLobby.Create(lb);
     {$ENDIF}
     end
   else

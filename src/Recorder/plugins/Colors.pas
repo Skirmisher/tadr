@@ -98,7 +98,7 @@ var
   nCurColor: Word;
   i: integer;
   CurrentProcessHandle: THandle;
-  CommittedBytes: Longword;
+  CommittedBytes: NativeUInt;
   OldProtect, tmpOldProtect: longword;
 begin
   CurrentProcessHandle := GetCurrentProcess;

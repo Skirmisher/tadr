@@ -288,8 +288,8 @@ type
   TRec2Rec_ModInfo_Message = packed record
     PlayerID       : TDPID;
     ModID          : Integer;
-    ModMajorVer    : AnsiChar;
-    ModMinorVer    : AnsiChar;
+    ModMajorVer    : Char;
+    ModMinorVer    : Char;
   end;
 
 {

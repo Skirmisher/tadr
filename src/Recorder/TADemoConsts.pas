@@ -144,27 +144,6 @@ end;
 
 //function DisableThreadLibraryCalls : longbool; stdcall;  External kernel32 name 'DisableThreadLibraryCalls';
 
-type
-  TGetVolumePathNameAHandler = function( lpszFileName : pAnsiChar;
-                                        lpszVolumePathName: pAnsiChar;
-                                        cchBufferLength : longword) : longbool; stdcall;// External  name 'GetVolumePathName';
-var
-  proc : TGetVolumePathNameAHandler;
-function GetVolumePathName( lpszFileName : pAnsiChar;
-                            lpszVolumePathName: pAnsiChar;
-                            cchBufferLength : longword ) : longbool; stdcall; //External kernel32 name 'GetVolumePathName';
-begin
-Result := False;
-if kernellib = 0 then
-  kernellib := LoadLibrary( kernel32 );
-if kernellib <> 0 then
-  begin
-  proc := GetProcAddress( kernellib, 'GetVolumePathNameA' );
-  if Assigned(proc) then
-    Result := proc( lpszFileName, lpszVolumePathName, cchBufferLength );
-  end;
-end;
-
 const
   COMPRESSION_FORMAT_DEFAULT = 1;
   FILE_DEVICE_FILE_SYSTEM    = 9;

@@ -1,31 +1,27 @@
 unit textdata;
+
 interface
 
 uses
-// activex,
-  classes;
-Procedure SetShortStr( var CharArray; len : integer; str : string);
+  Classes;
 
-function HexToStr (num :Cardinal; digits :integer) :string;
-function DataToStr (p :pointer; size :integer) :String;
-//function DataSize (const s :string) :integer;
-function StrToData (const s :string; var aDataSize : integer) :pointer;
-//procedure StrData (const source :string; var dest);
-function PtrToStr (p :pointer; len :integer) :string;
-function IsSameGuid (g1, t1 :TGuid) :boolean;
-function StrToBin (const s :String) :string;
+procedure SetShortStr(var CharArray; len: Integer; str: String);
+
+function StrToData(const s: String; var aDataSize: Integer): Pointer;
+function StrToBin(const s: String): String;
 function BinToInt(const s :String; Startindex : integer; StartBit, BitCount :integer) :Integer;
-function FixPath (const s :string) :string;
-function SimpleCrypt (const s :string) :string;
-function CalcCRC (curcrc :longword; data :pointer; len :longword) :longword;
-function RemoveInvalid (const st :string) :string;
+function FixPath(const s :string) :string;
+function SimpleCrypt(const s: String): AnsiString;
+function CalcCRC(curcrc :longword; data :pointer; len :longword) :longword;
+function RemoveInvalid(const st :string) :string;
 function RemoveInvalidIncSpace (const st :string) :string;
 function LeftPad(S: string; Ch: Char; Len: Integer): string;
 
-function DataToHex( const s : string ) : string; overload;
-function DataToHex( const s : string; index : integer; len : integer ) : string; overload;
-  function DataToStr2( const s : string) : string;
-
+function DataToHex(const s : string ) : string; overload;
+function DataToHex(const s : string; index : integer; len : integer ) : string; overload;
+function DataToStr(p: Pointer; size: Integer): String;
+function DataToStr2(const s : string) : string;
+function PtrToStr(p: Pointer; len: Integer): String;
 
 procedure ParseParams( ParamData : string; params : TStrings );
 
@@ -44,7 +40,7 @@ var
 begin
 if length(str) > len then
   begin
-  TLog.Add(1,'Error when copying long sting to fixed size. Max size; '+IntToStr(len)+' but tried to add '+IntTostr(length(str)) );
+  TLog.Add(1,'Error when copying long string to fixed size. Max size; '+IntToStr(len)+' but tried to add '+IntTostr(length(str)) );
   TLog.Add(1,'Error caused by the string: '+str);
   alen := len;
   end
@@ -61,24 +57,6 @@ Result := '';
 for i := 1 to Length(s) do
   Result := Result+'#$'+IntToHex(ord(s[i]),2);
 end; {DataToStr2}
-
-function HexToStr (num :Cardinal; digits :integer) :String;
-var
-  i :integer;
-begin
-SetLength( Result, digits );
-for i := 1 to digits do
-  begin
-  case num mod 16 of
-    0..9   : Result[i] := char( (num mod 16) + Byte('0') );
-    10..15 : Result[i] := char( (num mod 16) + Byte('A') - 10 );
-  end;
-  num := num div 16;
-  end;
-
-if num > 0 then
-  Result := Result + '(overflow)';
-end;
 
 
 function IsStrByte( const s : string; var Value : byte ) : Boolean;
@@ -265,19 +243,6 @@ Const
     $bdbdf21c, $cabac28a, $53b39330, $24b4a3a6, $bad03605, $cdd70693,
     $54de5729, $23d967bf, $b3667a2e, $c4614ab8, $5d681b02, $2a6f2b94,
     $b40bbe37, $c30c8ea1, $5a05df1b, $2d02ef8d  );
-
-function IsSameGuid (g1, t1 :TGuid) :boolean;
-var
-  i :integer;
-begin
-Result := false;
-if g1.d1 <> t1.d1 then exit;
-if g1.d2 <> t1.d2 then exit;
-if g1.d3 <> t1.d3 then exit;
-for i := 0 to 7 do
-  if g1.d4[i] <> t1.d4[i] then exit;
-Result := true;
-end;
 
 function DataToStr (p :pointer; size :integer) :string;
 type
@@ -499,7 +464,7 @@ begin
 end;
 
 //xor'ar med 42 bara..
-function SimpleCrypt (const s :string) :string;
+function SimpleCrypt(const s: String): AnsiString;
 var
   i   :integer;
 begin

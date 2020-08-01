@@ -2,7 +2,7 @@
 
 Fast Memory Manager: Messages
 
-Polish translation by Artur RedŸko.
+Polish translation by Artur RedŸko (arturr@opegieka.pl).
 
 }
 
@@ -14,18 +14,18 @@ interface
 
 const
   {The name of the debug info support DLL}
-  FullDebugModeLibraryName = 'FastMM_FullDebugMode.dll';
+  FullDebugModeLibraryName32Bit = 'FastMM_FullDebugMode.dll';
+  FullDebugModeLibraryName64Bit = 'FastMM_FullDebugMode64.dll';
   {Event log strings}
   LogFileExtension = '_MemoryManager_raport.txt'#0;
   CRLF = #13#10;
   EventSeparator = '--------------------------------';
   {Class name messages}
   UnknownClassNameMsg = 'Nieznany';
-  {Stack trace Message}
-  CurrentStackTraceMsg = #13#10#13#10'Aktualny œlad stosu prowadzi do tego b³êdu (zwraca adresy): ';
   {Memory dump message}
   MemoryDumpMsg = #13#10#13#10'Aktualny zrzut pamiêci 256 bajtów zaczynaj¹cy siê od adresu ';
   {Block Error Messages}
+  BlockScanLogHeader = 'Zaalokowany blok zapisany przez LogAllocatedBlocksToFile. Rozmiar : ';
   ErrorMsgHeader = 'FastMM wykry³ b³¹d podczas operacji ';
   GetMemMsg = 'GetMem';
   FreeMemMsg = 'FreeMem';
@@ -35,25 +35,18 @@ const
   BlockHeaderCorruptedMsg = 'Nag³ówek bloku jest uszkodzony. ';
   BlockFooterCorruptedMsg = 'Stopka bloku jest uszkodzona. ';
   FreeModifiedErrorMsg = 'FastMM wykry³ ¿e blok zosta³ zmodyfikowany po tym jak zosta³ zwolniony. ';
+  FreeModifiedDetailMsg = #13#10#13#10'Modified byte offsets (and lengths): ';
   DoubleFreeErrorMsg = 'Wykryto próbê zwolnienia/realokacji niezaalokowanego bloku.';
+  WrongMMFreeErrorMsg = 'An attempt has been made to free/reallocate a block that was allocated through a different FastMM instance. Check your memory manager sharing settings.';
   PreviousBlockSizeMsg = #13#10#13#10'Poprzedni rozmiar bloku by³: ';
   CurrentBlockSizeMsg = #13#10#13#10'Rozmiar bloku jest: ';
-  StackTraceAtPrevAllocMsg = #13#10#13#10'Œlad stosu kiedy ten blok by³ poprzednio zaalokowany (zwraca adresy):';
-  StackTraceAtAllocMsg = #13#10#13#10'Œlad stosu kiedy ten blok by³ zaalokowany (zwraca adresy):';
   PreviousObjectClassMsg = #13#10#13#10'Blok zosta³ poprzednio u¿yty w obiekcie klasy: ';
   CurrentObjectClassMsg = #13#10#13#10'Blok jest aktualnie u¿ywany w obiekcie klasy: ';
-  StackTraceAtFreeMsg = #13#10#13#10'Œlad stosu kiedy ten blok by³ poprzednio zwolniony (zwraca adresy):';
+  PreviousAllocationGroupMsg = #13#10#13#10'By³a grupa alokacji : ';
+  PreviousAllocationNumberMsg = #13#10#13#10'By³a iloœæ alokacji : ';
+  CurrentAllocationGroupMsg = #13#10#13#10'Jest grupa alokacji : ';
+  CurrentAllocationNumberMsg = #13#10#13#10'Jest iloœæ alokacji : ';
   BlockErrorMsgTitle = 'Wykryto b³¹d pamiêci';
-  {Virtual Method Called On Freed Object Errors}
-  StandardVirtualMethodNames: array[1 + vmtParent div 4 .. -1] of PChar = (
-    'SafeCallException',
-    'AfterConstruction',
-    'BeforeDestruction',
-    'Dispatch',
-    'DefaultHandler',
-    'NewInstance',
-    'FreeInstance',
-    'Destroy');
   VirtualMethodErrorHeader = 'FastMM wykry³ próbê u¿ycia wirtualnej metody zwolnionego obiektu. Zostanie wygenerowany teraz wyj¹tek w celu przerwania aktualnej operacji.';
   InterfaceErrorHeader = 'FastMM wykry³ próbê u¿ycia interfejsu zwolnionego obiektu. Zostanie wygenerowany teraz wyj¹tek w celu przerwania aktualnej operacji.';
   BlockHeaderCorruptedNoHistoryMsg = ' Niestety nag³ówek bloku zosta³ uszkodzony wiêc historia nie jest dostêpna.';
@@ -61,8 +54,15 @@ const
   VirtualMethodName = #13#10#13#10'Metoda wirtualna: ';
   VirtualMethodOffset = 'przesuniêcie +';
   VirtualMethodAddress = #13#10#13#10'Adres metody wirtualnej: ';
-  StackTraceAtObjectAllocMsg = #13#10#13#10'Œlad stosu kiedy obiekt zosta³ zaalokowany (zwraca adresy):';
-  StackTraceAtObjectFreeMsg = #13#10#13#10'Œlad stosu kiedy obiekt zosta³ póŸniej zwolniony (zwraca adresy):';
+  {Stack trace messages}
+  CurrentThreadIDMsg = #13#10#13#10'The current thread ID is 0x';
+  CurrentStackTraceMsg = ', and the stack trace (return addresses) leading to this error is:';
+  ThreadIDPrevAllocMsg = #13#10#13#10'This block was previously allocated by thread 0x';
+  ThreadIDAtAllocMsg = #13#10#13#10'This block was allocated by thread 0x';
+  ThreadIDAtFreeMsg = #13#10#13#10'The block was previously freed by thread 0x';
+  ThreadIDAtObjectAllocMsg = #13#10#13#10'The object was allocated by thread 0x';
+  ThreadIDAtObjectFreeMsg = #13#10#13#10'The object was subsequently freed by thread 0x';
+  StackTraceMsg = ', and the stack trace (return addresses) at the time was:';
   {Installation Messages}
   AlreadyInstalledMsg = 'FastMM4 jest ju¿ zainstalowany.';
   AlreadyInstalledTitle = 'Ju¿ zainstalowany.';
@@ -77,7 +77,8 @@ const
     + 'przejmie kontrolê.'#13#10#13#10'Jeœli u¿ywasz aplikacji do przechwytywania wyj¹tków '
     + 'takich jak MadExcept,'#13#10'zmieñ jego konfiguracjê zapewniaj¹c aby modu³ '
     + 'FastMM4.pas by³ zainicjowany jako pierwszy modu³.';
-  MemoryAllocatedTitle = 'Nie mo¿na zainstalowaæ FastMM4 - pamiêæ zosta³a ju¿ zaalokowana';
+  MemoryAllocatedTitle = 'Nie mo¿na zainstalowaæ FastMM4 - pamiêæ zosta³a ju¿ zaalokowana.'
+    + 'FastMM4.pas jest inicjowany jako pierwszy modu³.';
   {Leak checking messages}
   LeakLogHeader = 'Wyciek³ blok pamiêci. Rozmiar wynosi: ';
   LeakMessageHeader = 'Aplikacja wykry³a wycieki pamiêci. ';
@@ -92,7 +93,8 @@ const
 {$endif}
     + ': ';
   BytesMessage = ' bajtów: ';
-  StringBlockMessage = 'String';
+  AnsiStringBlockMessage = 'AnsiString';
+  UnicodeStringBlockMessage = 'UnicodeString';
   LeakMessageFooter = #13#10
 {$ifndef HideMemoryLeakHintMessage}
     + #13#10'Uwaga: '
